@@ -1,0 +1,50 @@
+function excel(){
+
+        $data['siswa'] = $this->Siswa_model->get_all_siswa('siswa')->result();
+
+        require(APPPATH.  'PHPExcel-1.8/Classes/PHPExcel.php');
+        require(APPPATH.  'PHPExcel-1.8/Classes/PHPExcel/Writer/Excel2007.php');
+
+        $object = new PHPExcel();
+
+        $object->getProperties()->setCreator("Pusat Data");
+        $object->getProperties()->setLastModifiedBy("Pusat Data");
+        $object->getProperties()->setTitle("Data Santri Update");
+
+        $object->setActiveSheetIndex(0);
+
+        $object->getActiveSheet()->setCellValue('A1', 'No');
+        $object->getActiveSheet()->setCellValue('B1', 'Stambuk');
+        $object->getActiveSheet()->setCellValue('C1', 'Nama Lengkap');
+        $object->getActiveSheet()->setCellValue('D1', 'Kelas');
+        $object->getActiveSheet()->setCellValue('E1', 'Konsulat');
+        $object->getActiveSheet()->setCellValue('F1', 'Rayon');
+
+        $baris = 2;
+        $no = 1;
+
+        foreach ($sheetData as $s) {
+            $object->getActiveSheet()->setCellValue('A' .$baris, $no++);
+            $object->getActiveSheet()->setCellValue('B' .$baris, $s->nis);
+            $object->getActiveSheet()->setCellValue('C' .$baris, $s->nama_lengkap);
+            $object->getActiveSheet()->setCellValue('D' .$baris, $s->kelas);
+            $object->getActiveSheet()->setCellValue('E' .$baris, $s->konsul);
+            $object->getActiveSheet()->setCellValue('F' .$baris, $s->rayon);
+           
+            $baris++;
+        }
+
+        $filename="Data_Santri".'.xlsx';
+
+        $object->getActiveSheet()->setTitle("Data Santri");
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        header('Content-Disposition: attachment;filename="'.$filename. '"');
+        header('Cache-Control: max-age=0');
+
+        $writer=PHPExcel_IOFactory::createwriter($object, 'Excel2007');
+        $writer->save('php://output');
+
+        exit;
+        
+    }
